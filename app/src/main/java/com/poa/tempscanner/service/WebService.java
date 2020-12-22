@@ -108,7 +108,6 @@ public class WebService extends Service {
         try {
             Timber.e("==== Start web service");
             this.nano.start();
-            startActivity(new Intent(getApplicationContext(),MainActivity.class));
             return;
         } catch (IOException iOException) {
             iOException.printStackTrace();

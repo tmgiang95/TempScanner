@@ -29,7 +29,7 @@
         android:name=".App"
         android:supportsRtl="true"
         android:largeHeap="true"
-        android:theme="@style/Theme.TestQuestionnaire">
+        android:theme="@style/AppTheme">
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -40,8 +40,8 @@
 
 
         </activity>
-
-
+        <activity android:name=".DetectorActivity"/>
+        <activity android:name=".CameraActivity"/>
         <service android:name=".service.WebService" />
         <service android:name=".service.FloatingActionButtonService" />
         <service android:name=".service.FloatingWidgetService" />

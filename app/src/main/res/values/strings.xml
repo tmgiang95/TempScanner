@@ -60,5 +60,6 @@
     <string name="email_send_test">Send a test email</string>
 
     <string name="auto_update">Auto Update</string>
-
+    <string name="tfe_od_camera_error" translation_description="Error regarding camera support[CHAR_LIMIT=40]">This device doesn\'t support Camera2 API.</string>
+    <string name="question">Question: </string>
 </resources>

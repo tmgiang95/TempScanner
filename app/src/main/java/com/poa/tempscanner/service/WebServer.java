@@ -1,13 +1,14 @@
 package com.poa.tempscanner.service;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
-import com.example.questionnairelibrary.DetectorActivity;
 import com.google.gson.Gson;
+import com.poa.tempscanner.DetectorActivity;
 import com.poa.tempscanner.MainActivity;
 import com.poa.tempscanner.model.MipsData;
 import com.poa.tempscanner.model.UploadMipsResponse;
@@ -60,16 +61,14 @@ public class WebServer extends NanoHTTPD {
         if (paramMipsData != null) {
             Context context = this.context;
             Timber.e("Print card");
-
+            Intent dialogIntent = new Intent(context, DetectorActivity.class);
+            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            dialogIntent.putExtra("mimpsdata",paramMipsData);
+            context.startActivity(dialogIntent);
             if (MailUtils.isGTTempORNoMask(paramMipsData, SettingsUtil.getStandardTemperature(PreferenceManager.getDefaultSharedPreferences(context)))) {
                 MailUtils.sendTemperatureWarningIfNeeded(context, paramMipsData, false, SettingsUtil.getStandardTemperature(PreferenceManager.getDefaultSharedPreferences(context)));
-            } else {
-                Intent dialogIntent = new Intent(context, DetectorActivity.class);
-                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(dialogIntent);
             }
 
-            PrintUtil.print(context, paramMipsData);
         }
     }
 

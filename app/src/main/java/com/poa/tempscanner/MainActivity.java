@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
-import com.example.questionnairelibrary.CameraActivity;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.listener.multi.BaseMultiplePermissionsListener;
 import com.poa.tempscanner.base.BaseActivity;

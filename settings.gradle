@@ -1,4 +1,4 @@
 include ':BrotherPrintLibrary'
-include ':questionnairelibrary'
+//include ':questionnairelibrary'
 include ':app'
 rootProject.name = "TempScanner"
