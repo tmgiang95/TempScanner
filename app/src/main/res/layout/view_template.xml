@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_stroke_1_black_"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/tvPass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/black"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="PASS"
+        android:textColor="@android:color/white"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imgUser"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="fitXY"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/ic_launcher_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvPass"
+        app:tint="@android:color/black" />
+
+    <TextView
+        android:id="@+id/tvFullName"
+        android:layout_width="0dp"
+        android:textStyle="bold"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="Full Name"
+        android:textColor="@android:color/black"
+        app:layout_constraintBottom_toTopOf="@+id/tvCompany"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imgUser"
+        app:layout_constraintTop_toTopOf="@+id/imgUser" />
+
+    <TextView
+        android:id="@+id/tvCompany"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="Company"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/imgUser"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imgUser"
+        app:layout_constraintTop_toTopOf="@+id/imgUser" />
+
+    <TextView
+        android:id="@+id/tvDateTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="Thursday, September 3, 2020 12:00:00 AM"
+        android:textColor="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/imgUser"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imgUser"
+        app:layout_constraintTop_toBottomOf="@+id/tvCompany" />
+
+    <TextView
+        android:id="@+id/tvTempature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:text="Tempature: 93.2*F"
+        android:textColor="@android:color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgUser" />
+
+
+    <TextView
+        android:id="@+id/POA"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Pacific Office Automation"
+        android:textColor="@android:color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTempature" />
+
+    <TextView
+        android:id="@+id/tvMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="THIS PASS MUST BE WORN ALL TIMES"
+        android:textColor="@android:color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textStyle="bold"
+
+        app:layout_constraintTop_toBottomOf="@+id/imgUser" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

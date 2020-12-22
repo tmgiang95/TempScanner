@@ -1,0 +1,4 @@
+include ':BrotherPrintLibrary'
+include ':questionnairelibrary'
+include ':app'
+rootProject.name = "TempScanner"

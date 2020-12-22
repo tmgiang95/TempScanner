@@ -1,0 +1,102 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            app:key="email_alert"
+            app:title="@string/email_alert" />
+
+
+        <SwitchPreferenceCompat
+            app:allowDividerAbove="true"
+            app:dependency="email_alert"
+            app:key="email_mask"
+            app:title="@string/email_no_mask" />
+
+
+        <EditTextPreference
+            app:dependency="email_alert"
+            app:key="email_recipient"
+            app:summary="@string/email_recipient_summary"
+            app:title="@string/email_recipient" />
+
+        <SwitchPreferenceCompat
+            app:allowDividerAbove="true"
+            app:dependency="email_alert"
+            app:key="email_register_user"
+            app:title="@string/email_register_user" />
+
+        <SwitchPreferenceCompat
+            app:dependency="email_alert"
+            app:key="visitor_stranger"
+            app:title="@string/email_vistor" />
+
+        <SwitchPreferenceCompat
+            app:dependency="email_alert"
+            app:key="show_photo"
+            app:title="@string/email_show_photo" />
+
+        <SwitchPreferenceCompat
+            app:dependency="email_alert"
+            app:key="show_user_type"
+            app:title="@string/emai_show_user_type" />
+
+        <SwitchPreferenceCompat
+            app:dependency="email_alert"
+            app:allowDividerAbove="true"
+            app:key="use_custom_stmp"
+            app:title="@string/email_use_custom_smtp" />
+
+        <EditTextPreference
+            app:useSimpleSummaryProvider="true"
+            app:dependency="use_custom_stmp"
+            app:isPreferenceVisible="false"
+            app:key="smtp_server"
+            app:title="@string/email_stmp_server" />
+
+        <EditTextPreference
+            app:useSimpleSummaryProvider="true"
+            app:dependency="use_custom_stmp"
+            app:key="smtp_port"
+            app:isPreferenceVisible="false"
+            app:title="@string/email_stmp_port" />
+        <EditTextPreference
+            app:useSimpleSummaryProvider="true"
+            app:dependency="use_custom_stmp"
+            app:key="smtp_user"
+            app:isPreferenceVisible="false"
+            app:title="@string/email_stmp_user" />
+        <EditTextPreference
+            app:useSimpleSummaryProvider="true"
+            app:dependency="use_custom_stmp"
+            app:key="smtp_password"
+            app:isPreferenceVisible="false"
+            app:title="@string/email_stmp_password" />
+        <EditTextPreference
+            app:useSimpleSummaryProvider="true"
+            app:dependency="use_custom_stmp"
+            app:key="smtp_from"
+            app:isPreferenceVisible="false"
+            app:title="@string/email_stmp_from" />
+        <SwitchPreferenceCompat
+            app:dependency="use_custom_stmp"
+            app:key="smtp_ssl"
+            app:isPreferenceVisible="false"
+            app:title="@string/email_use_custom_ssl" />
+        <SwitchPreferenceCompat
+            app:dependency="use_custom_stmp"
+            app:key="smtp_tls"
+            app:isPreferenceVisible="false"
+            app:title="@string/email_use_custom_tls" />
+        <Preference
+            app:allowDividerAbove="true"
+            app:dependency="email_alert"
+            app:title="Send a test email"
+            app:key="send_test_email"
+        />
+
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

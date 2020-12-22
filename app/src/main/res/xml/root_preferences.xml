@@ -1,0 +1,66 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            app:key="print_badge"
+            app:title="@string/print_badge" />
+
+        <SwitchPreferenceCompat
+            app:allowDividerAbove="true"
+            app:dependency="print_badge"
+            app:key="registered_user"
+            app:title="@string/for_register" />
+
+        <SwitchPreferenceCompat
+            app:dependency="print_badge"
+            app:key="registered_visitor"
+            app:title="@string/for_register_visitor" />
+
+        <SwitchPreferenceCompat
+            app:dependency="print_badge"
+            app:key="unregistered_visitor"
+            app:title="@string/for_udregister_visitor" />
+
+        <SwitchPreferenceCompat
+            app:allowDividerAbove="true"
+            app:dependency="print_badge"
+            app:key="scan_image"
+            app:title="@string/show_scan_image" />
+
+        <SwitchPreferenceCompat
+            app:dependency="print_badge"
+            app:key="user_name"
+            app:title="@string/show_user_name" />
+
+        <SwitchPreferenceCompat
+            app:dependency="print_badge"
+            app:key="user_type"
+            app:title="@string/show_user_type" />
+
+        <SwitchPreferenceCompat
+            app:dependency="print_badge"
+            app:key="scan_time"
+            app:title="@string/show_scan_time" />
+
+        <SwitchPreferenceCompat
+            app:dependency="print_badge"
+            app:key="temperature"
+            app:title="@string/show_temperature" />
+
+        <SwitchPreferenceCompat
+            app:dependency="print_badge"
+            app:key="company"
+            app:title="@string/show_company" />
+
+        <Preference
+            app:allowDividerAbove="true"
+            app:dependency="print_badge"
+            app:key="print_status"
+            app:summary="@string/no_connected"
+            app:title="@string/print_status" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
