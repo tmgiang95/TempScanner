@@ -13,18 +13,19 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Trace;
 import android.util.Size;
 import android.view.Surface;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,8 +44,9 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Locale;
 
-import me.grantland.widget.AutofitTextView;
+import timber.log.Timber;
 
 public abstract class CameraActivity extends AppCompatActivity
         implements ImageReader.OnImageAvailableListener,
@@ -68,13 +70,22 @@ public abstract class CameraActivity extends AppCompatActivity
     private Runnable imageConverter;
 
     private int currentQuestionIdx = 0;
-    private LinearLayout bottomSheetLayout;
+    private LinearLayout questionLayout;
     protected ImageView ivIconConfirm;
     protected RelativeLayout layoutPopUp;
+    protected LinearLayout layoutInstruction;
+    protected LinearLayout layoutBottom;
     protected CircularProgressBar circularProgressBar;
-    private AutofitTextView tvQuestion;
+    private TextView tvQuestion;
+    private TextView tvCountDownTimer;
+    private TextView tvInstruction;
     protected List<Question> questionList;
     private MipsData mipsData;
+
+    private static final long START_TIME_IN_MILLIS = 30000;
+    private long mTimeLeftInMillis = START_TIME_IN_MILLIS;
+    private CountDownTimer mCountDownTimer;
+    private CountDownTimer mCountDownInstructionTimer;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -94,19 +105,84 @@ public abstract class CameraActivity extends AppCompatActivity
         } else {
             requestPermission();
         }
-        bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
+        questionLayout = findViewById(R.id.question_layout);
         tvQuestion = findViewById(R.id.tvQuestion);
+        tvCountDownTimer = findViewById(R.id.countDownTimer);
+        tvInstruction = findViewById(R.id.instruction);
         circularProgressBar = findViewById(R.id.circularProgressBar);
         ivIconConfirm = findViewById(R.id.ivIcon);
         layoutPopUp = findViewById(R.id.rlPopupConfirm);
-        ViewGroup.LayoutParams params = bottomSheetLayout.getLayoutParams();
-        params.height = getResources().getDisplayMetrics().heightPixels / 3;
-        bottomSheetLayout.setLayoutParams(params);
+        layoutBottom = findViewById(R.id.bottomLayout);
+        layoutInstruction = findViewById(R.id.layoutInstruction);
+//        ViewGroup.LayoutParams params = bottomSheetLayout.getLayoutParams();
+//        params.height = getResources().getDisplayMetrics().heightPixels / 3;
+//        bottomSheetLayout.setLayoutParams(params);
         Type listType = new TypeToken<List<Question>>() {
         }.getType();
         questionList = new Gson().fromJson(loadJSONFromAsset(), listType);
-        tvQuestion.setText(questionList.get(currentQuestionIdx).getQuestion());
+        mCountDownInstructionTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                mTimeLeftInMillis = millisUntilFinished;
+                updateCountDownInstructionText();
+            }
+
+            @Override
+            public void onFinish() {
+                showQuestion();
+            }
+        }.start();
     }
+
+    protected void showQuestion() {
+        layoutInstruction.setVisibility(View.GONE);
+        layoutBottom.setVisibility(View.VISIBLE);
+        questionLayout.setVisibility(View.VISIBLE);
+        tvQuestion.setText(questionList.get(currentQuestionIdx).getQuestion());
+        mTimeLeftInMillis = START_TIME_IN_MILLIS;
+        startQuestionTimer();
+    }
+
+
+    private void startQuestionTimer() {
+        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                mTimeLeftInMillis = millisUntilFinished;
+                if (mTimeLeftInMillis > 5000 && mTimeLeftInMillis < 6000) {
+                    Toast.makeText(getBaseContext(), "You must answer the Question!!!", Toast.LENGTH_LONG).show();
+                }
+                updateCountDownText();
+            }
+
+            @Override
+            public void onFinish() {
+                finish();
+            }
+        }.start();
+    }
+
+    private void resetTimer() {
+        mCountDownTimer.cancel();
+        mTimeLeftInMillis = START_TIME_IN_MILLIS;
+        startQuestionTimer();
+        updateCountDownText();
+    }
+
+    private void updateCountDownText() {
+        int minutes = (int) (mTimeLeftInMillis / 1000) / 60;
+        int seconds = (int) (mTimeLeftInMillis / 1000) % 60;
+        String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
+        tvCountDownTimer.setText(timeLeftFormatted);
+    }
+
+    private void updateCountDownInstructionText() {
+        int minutes = (int) (mTimeLeftInMillis / 1000) / 60;
+        int seconds = (int) (mTimeLeftInMillis / 1000) % 60;
+        String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
+        tvInstruction.setText(timeLeftFormatted);
+    }
+
 
     public String loadJSONFromAsset() {
         String json = null;
@@ -126,16 +202,27 @@ public abstract class CameraActivity extends AppCompatActivity
 
     protected void backQuestion() {
         if (currentQuestionIdx > 0) {
-            questionList.get(currentQuestionIdx).setAnswer(-1);
             currentQuestionIdx--;
             tvQuestion.setText(questionList.get(currentQuestionIdx).getQuestion());
+            resetTimer();
         } else {
             Toast.makeText(CameraActivity.this, "No more to back ", Toast.LENGTH_SHORT).show();
         }
     }
 
+    protected void forwardQuestion() {
+        if (questionList.get(currentQuestionIdx).getAnswer() == -1) {
+            Toast.makeText(this, "You must answer current Question", Toast.LENGTH_SHORT).show();
+        } else {
+            currentQuestionIdx++;
+            tvQuestion.setText(questionList.get(currentQuestionIdx).getQuestion());
+            resetTimer();
+        }
+    }
+
     protected void nextQuestion(int result) {
-        if (currentQuestionIdx >= questionList.size()) {
+        resetTimer();
+        if (currentQuestionIdx >= questionList.size() - 1) {
             boolean finalResult = true;
             for (Question question : questionList) {
                 if (question.getAnswer() == 1) {
@@ -144,16 +231,23 @@ public abstract class CameraActivity extends AppCompatActivity
                 }
             }
             if (finalResult) {
-                PrintUtil.print(getBaseContext(), mipsData);
                 Toast.makeText(CameraActivity.this, "Print information ", Toast.LENGTH_SHORT).show();
+                try {
+                    PrintUtil.print(getBaseContext(), mipsData);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Timber.e(e, "nextQuestion: ");
+                }
             } else {
                 Toast.makeText(CameraActivity.this, "Not Approved ", Toast.LENGTH_SHORT).show();
             }
             finish();
+
         } else {
             questionList.get(currentQuestionIdx).setAnswer(result);
             currentQuestionIdx++;
             tvQuestion.setText(questionList.get(currentQuestionIdx).getQuestion());
+            resetTimer();
         }
     }
 
@@ -406,16 +500,7 @@ public abstract class CameraActivity extends AppCompatActivity
                 if (map == null) {
                     continue;
                 }
-
-                // Fallback to camera1 API for internal cameras that don't have full support.
-                // This should help with legacy situations where using the camera2 API causes
-                // distorted or otherwise broken previews.
-//                useCamera2API =
-//                        (facing == CameraCharacteristics.LENS_FACING_EXTERNAL)
-//                                || isHardwareLevelSupported(
-//                                characteristics, CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
                 useCamera2API = true;
-
                 LOGGER.i("Camera API lv2?: %s", useCamera2API);
                 return cameraId;
             }
@@ -429,7 +514,6 @@ public abstract class CameraActivity extends AppCompatActivity
     protected void setFragment() {
         String cameraId = chooseCamera();
         Fragment fragment;
-//        if (useCamera2API) {
         CameraConnectionFragment camera2Fragment =
                 CameraConnectionFragment.newInstance(
                         new CameraConnectionFragment.ConnectionCallback() {
@@ -446,10 +530,6 @@ public abstract class CameraActivity extends AppCompatActivity
 
         camera2Fragment.setCamera(cameraId);
         fragment = camera2Fragment;
-//        } else {
-//            fragment =
-//                    new LegacyCameraConnectionFragment(this, getLayoutId(), getDesiredPreviewFrameSize());
-//        }
 
         getFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
     }

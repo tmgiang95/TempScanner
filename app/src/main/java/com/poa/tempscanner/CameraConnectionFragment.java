@@ -556,7 +556,7 @@ public class CameraConnectionFragment extends Fragment {
 
         final Matrix matrix = new Matrix();
         final RectF viewRect = new RectF(0, 0, viewWidth, viewHeight);
-        final RectF bufferRect = new RectF(0, 0, previewSize.getHeight(), previewSize.getWidth());
+//        final RectF bufferRect = new RectF(0, 0, previewSize.getHeight(), previewSize.getWidth());
         final float centerX = viewRect.centerX();
         final float centerY = viewRect.centerY();
 //        if (Surface.ROTATION_90 == rotation || Surface.ROTATION_270 == rotation) {

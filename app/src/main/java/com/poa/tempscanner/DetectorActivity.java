@@ -26,7 +26,6 @@ import com.poa.tempscanner.detection.MultiBoxTracker;
 import com.poa.tempscanner.detection.TFLiteObjectDetectionAPIModel;
 import com.poa.tempscanner.env.BorderedText;
 import com.poa.tempscanner.env.ImageUtils;
-import com.poa.tempscanner.env.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,14 +40,14 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private static final String TF_OD_API_LABELS_FILE = "label.txt";
     private static final DetectorMode MODE = DetectorMode.TF_OD_API;
     // Minimum detection confidence to track a detection.
-    private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.7f;
+    private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.85f;
     private static final boolean MAINTAIN_ASPECT = false;
     private static final Size DESIRED_PREVIEW_SIZE = new Size(1280, 720);
     private static final boolean SAVE_PREVIEW_BITMAP = false;
     private static final boolean DRAW_BOX = false;
     private static final float TEXT_SIZE_DIP = 10;
-    private static final float COUNT_CONFIRM = 5;
-    private static final float POPUP_THRESHOLD = 3;
+    private static final float COUNT_CONFIRM = 1;
+    private static final float POPUP_THRESHOLD = 2;
     OverlayView trackingOverlay;
     private Integer sensorOrientation;
 
@@ -191,72 +190,88 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                     //Draw Box
                     final RectF location = result.getLocation();
                     if (location != null && result.getConfidence() >= minimumConfidence) {
-                        if (DRAW_BOX) {
-                            canvas.drawRect(location, paint);
-                            cropToFrameTransform.mapRect(location);
-                            result.setLocation(location);
-                            mappedRecognitions.add(result);
-                        }
-                        showPopupThreshold++;
-                        if (showPopupThreshold >= POPUP_THRESHOLD) {
-                            hidePopupThreshold = 0;
-                            if (hmResult.get(result.getTitle()) != null) {
+                        if (layoutInstruction.getVisibility() == View.GONE) {
+                            if (DRAW_BOX) {
+                                canvas.drawRect(location, paint);
+                                cropToFrameTransform.mapRect(location);
+                                result.setLocation(location);
+                                mappedRecognitions.add(result);
+                            }
+                            showPopupThreshold++;
+                            if (showPopupThreshold >= POPUP_THRESHOLD) {
+                                hidePopupThreshold = 0;
+                                if (hmResult.get(result.getTitle()) != null) {
 
-                                Integer value = hmResult.get(result.getTitle());
-                                value++;
-                                hmResult.put(result.getTitle(), value);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        layoutPopUp.setVisibility(View.VISIBLE);
-                                        float progress = circularProgressBar.getProgress();
-                                        if (progress == 100) {
+                                    Integer value = hmResult.get(result.getTitle());
+                                    value++;
+                                    hmResult.put(result.getTitle(), value);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            layoutPopUp.setVisibility(View.VISIBLE);
+                                            float progress = circularProgressBar.getProgress();
+                                            if (progress == 100) {
+                                                switch (result.getTitle()) {
+                                                    case Constant.LEFT:
+                                                        backQuestion();
+                                                        break;
+                                                    case Constant.RIGHT:
+                                                        forwardQuestion();
+                                                        break;
+                                                    case Constant.UP:
+                                                        nextQuestion(1);
+                                                        break;
+                                                    case Constant.DOWN:
+                                                        nextQuestion(0);
+                                                        break;
+                                                }
+                                                circularProgressBar.setProgress(0);
+                                                hmResult.clear();
+                                                layoutPopUp.setVisibility(View.GONE);
+                                                showPopupThreshold = 0;
+                                            } else {
+                                                progress += (float) (100 / COUNT_CONFIRM);
+                                                circularProgressBar.setProgressWithAnimation(progress, 200L);
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    hmResult.clear();
+                                    hmResult.put(result.getTitle(), 1);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            layoutPopUp.setVisibility(View.VISIBLE);
                                             switch (result.getTitle()) {
                                                 case Constant.LEFT:
-                                                    backQuestion();
+                                                    ivIconConfirm.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_point_left));
+                                                    break;
+                                                case Constant.RIGHT:
+                                                    ivIconConfirm.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_point_right));
                                                     break;
                                                 case Constant.UP:
-                                                    nextQuestion(1);
+                                                    ivIconConfirm.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_like));
                                                     break;
-                                                case Constant.DOWN:
-                                                    nextQuestion(0);
-                                                    break;
+                                                default:
+                                                    ivIconConfirm.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_dislike));
                                             }
                                             circularProgressBar.setProgress(0);
-                                            hmResult.clear();
-                                            layoutPopUp.setVisibility(View.GONE);
-                                            showPopupThreshold = 0;
-                                        } else {
-                                            progress += (float) (100 / COUNT_CONFIRM);
-                                            circularProgressBar.setProgressWithAnimation(progress, 200L);
                                         }
-                                    }
-                                });
-                            } else {
-                                hmResult.clear();
-                                hmResult.put(result.getTitle(), 1);
+                                    });
+                                }
+                            }
+                        } else {
+                            if (result.getTitle().equals(Constant.UP)) {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        layoutPopUp.setVisibility(View.VISIBLE);
-                                        switch (result.getTitle()) {
-                                            case "left":
-                                                ivIconConfirm.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_point));
-                                                break;
-                                            case "right":
-                                                ivIconConfirm.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_point));
-                                                break;
-                                            case "up":
-                                                ivIconConfirm.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_like));
-                                                break;
-                                            default:
-                                                ivIconConfirm.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_dislike));
-                                        }
-                                        circularProgressBar.setProgress(0);
+                                        showQuestion();
                                     }
                                 });
                             }
                         }
+
+
                     } else {
                         if (hidePopupThreshold >= POPUP_THRESHOLD) {
                             runOnUiThread(new Runnable() {
