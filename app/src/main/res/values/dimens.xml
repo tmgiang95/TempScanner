@@ -4,4 +4,5 @@
     <dimen name="popup_height">400dp</dimen>
     <dimen name="tfe_bottom_sheet_corner_radius">15dp</dimen>
     <dimen name="tfe_bottom_sheet_top_padding">8dp</dimen>
+    <dimen name="text_size">28dp</dimen>
 </resources>

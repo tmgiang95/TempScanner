@@ -11,6 +11,7 @@ import com.karumi.dexter.Dexter;
 import com.karumi.dexter.listener.multi.BaseMultiplePermissionsListener;
 import com.poa.tempscanner.service.SyncMipsConfigWorker;
 import com.poa.tempscanner.service.WebService;
+import com.poa.tempscanner.ui.main.CDCSetting.CDCSettingModel;
 import com.poa.tempscanner.ui.main.EmailSetting.EmailSettingModel;
 import com.poa.tempscanner.ui.main.PrintSetting.PrintSettingModel;
 
@@ -23,6 +24,8 @@ public class App extends Application {
     private static Context appContext;
 
     private static PrintSettingModel settingModel;
+
+    private static CDCSettingModel cdcSettingModel;
 
     private static EmailSettingModel emailSettingModel;
 
@@ -49,6 +52,9 @@ public class App extends Application {
 
     public static EmailSettingModel getEmailModel() {
         return emailSettingModel;
+    }
+    public static CDCSettingModel getCDCModel() {
+        return cdcSettingModel;
     }
 
     public static UpdateSettingModel getUpdateModel() {

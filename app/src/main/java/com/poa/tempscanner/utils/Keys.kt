@@ -18,6 +18,12 @@ object Keys {
     const val COMPANY = "company"
 
     const val EMAIL_SETTING_MODEL = "EMAIL_SETTING_MODEL"
+    const val CDC_SETTING_MODEL = "CDC_SETTING_MODEL"
+    const val CDC_QUESTIONNAIRE = "cdc_questionnair"
+    const val CDC_MASK = "cdc_mask"
+    const val CDC_REQUIRE_EMPLOYEE = "require_role_employee"
+    const val CDC_REQUIRE_VISITOR = "require_role_visitor"
+    const val CDC_REQUIRE_UNREGISTER = "require_role_unregister"
 
     const val EMAIL_ALERT = "email_alert"
     const val EMAIL_USE_CUSTOM_SMTP = "use_custom_stmp"

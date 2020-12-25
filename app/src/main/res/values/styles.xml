@@ -30,7 +30,7 @@
         <item name="android:background">@color/darkblue</item>
     </style>
     <style name="CustomStepTabsTitleStyle" parent="MSStepTabTitle">
-        <item name="android:textSize">28sp</item>
+        <item name="android:textSize">@dimen/text_size</item>
         <item name="android:textColor">@color/white</item>
     </style>
 

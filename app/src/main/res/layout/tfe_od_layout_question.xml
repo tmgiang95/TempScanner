@@ -22,7 +22,7 @@
             android:padding="8dp"
             android:text="@string/question"
             android:textColor="@color/white"
-            android:textSize="28sp" />
+            android:textSize="@dimen/text_size" />
 
         <TextView
             android:id="@+id/countDownTimer"
@@ -35,7 +35,7 @@
             android:padding="8dp"
             android:text="00:15"
             android:textColor="@color/white"
-            android:textSize="28sp" />
+            android:textSize="@dimen/text_size" />
     </RelativeLayout>
     <TextView
         android:id="@+id/tvQuestion"

@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.poa.tempscanner.MainActivity;
 import com.poa.tempscanner.R;
+import com.poa.tempscanner.ui.main.CDCSetting.CDCSettingFragment;
 import com.poa.tempscanner.ui.main.EmailSetting.EmailSettingFragment;
 import com.poa.tempscanner.ui.main.EmailSetting.EmailSettingModel;
 import com.poa.tempscanner.ui.main.PrintSetting.PrintSettingFragment;
@@ -80,6 +81,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         if (getActivity() != null) {
             getActivity().findViewById(R.id.tvEmailSettings).setOnClickListener(this);
             getActivity().findViewById(R.id.tvPrintBadgeSetting).setOnClickListener(this);
+            getActivity().findViewById(R.id.tvCDCSetting).setOnClickListener(this);
             getActivity().findViewById(R.id.tvUpdate).setOnClickListener(this);
             getActivity().findViewById(R.id.tvVersion).setOnClickListener(this);
             getActivity().findViewById(R.id.imgHome).setOnClickListener(this);
@@ -101,6 +103,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             case R.id.tvPrintBadgeSetting:
                 goToPrintSettingPage();
                 break;
+            case R.id.tvCDCSetting:
+                goToCDCSettingPage();
+                break;
             case R.id.tvUpdate:
                 goToUpdatePage();
                 break;
@@ -118,6 +123,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private void goToEmailSettingPage() {
         if (getActivity() != null) {
             ((MainActivity) getActivity()).showScreen(EmailSettingFragment.class.getName(), new Bundle());
+        }
+    }
+    private void goToCDCSettingPage() {
+        if (getActivity() != null) {
+            ((MainActivity) getActivity()).showScreen(CDCSettingFragment.class.getName(), new Bundle());
         }
     }
 
