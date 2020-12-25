@@ -17,6 +17,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Trace;
+import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.View;
@@ -33,11 +34,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
+import com.poa.tempscanner.customview.MyStepperAdapter;
 import com.poa.tempscanner.env.ImageUtils;
 import com.poa.tempscanner.env.Logger;
 import com.poa.tempscanner.model.MipsData;
 import com.poa.tempscanner.model.Question;
 import com.poa.tempscanner.utils.PrintUtil;
+import com.stepstone.stepper.StepperLayout;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -84,9 +87,11 @@ public abstract class CameraActivity extends AppCompatActivity
 
     private static final long START_TIME_IN_MILLIS = 30000;
     private long mTimeLeftInMillis = START_TIME_IN_MILLIS;
+    private static final long START_TIME_INSTRUCTION_IN_MILLIS = 30000;
+    private long mTimeInstrucstionLeftInMillis = START_TIME_INSTRUCTION_IN_MILLIS;
     private CountDownTimer mCountDownTimer;
-    private CountDownTimer mCountDownInstructionTimer;
-
+    CountDownTimer mCountDownInstructionTimer;
+    private StepperLayout mStepperLayout;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         LOGGER.d("onCreate " + this);
@@ -114,28 +119,34 @@ public abstract class CameraActivity extends AppCompatActivity
         layoutPopUp = findViewById(R.id.rlPopupConfirm);
         layoutBottom = findViewById(R.id.bottomLayout);
         layoutInstruction = findViewById(R.id.layoutInstruction);
+        mStepperLayout = (StepperLayout) findViewById(R.id.stepperLayout);
 //        ViewGroup.LayoutParams params = bottomSheetLayout.getLayoutParams();
 //        params.height = getResources().getDisplayMetrics().heightPixels / 3;
 //        bottomSheetLayout.setLayoutParams(params);
         Type listType = new TypeToken<List<Question>>() {
         }.getType();
         questionList = new Gson().fromJson(loadJSONFromAsset(), listType);
-        mCountDownInstructionTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
+        mStepperLayout.setAdapter(new MyStepperAdapter(getSupportFragmentManager(), this,questionList.size()));
+        mCountDownInstructionTimer = new CountDownTimer(mTimeInstrucstionLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                mTimeLeftInMillis = millisUntilFinished;
+                mTimeInstrucstionLeftInMillis = millisUntilFinished;
                 updateCountDownInstructionText();
             }
 
             @Override
             public void onFinish() {
-                showQuestion();
+                showQuestion(false);
             }
         }.start();
     }
 
-    protected void showQuestion() {
+    protected void showQuestion(boolean stopTimer) {
+        if(stopTimer){
+            mCountDownInstructionTimer.cancel();
+        }
         layoutInstruction.setVisibility(View.GONE);
+        mStepperLayout.setVisibility(View.VISIBLE);
         layoutBottom.setVisibility(View.VISIBLE);
         questionLayout.setVisibility(View.VISIBLE);
         tvQuestion.setText(questionList.get(currentQuestionIdx).getQuestion());
@@ -177,8 +188,8 @@ public abstract class CameraActivity extends AppCompatActivity
     }
 
     private void updateCountDownInstructionText() {
-        int minutes = (int) (mTimeLeftInMillis / 1000) / 60;
-        int seconds = (int) (mTimeLeftInMillis / 1000) % 60;
+        int minutes = (int) (mTimeInstrucstionLeftInMillis / 1000) / 60;
+        int seconds = (int) (mTimeInstrucstionLeftInMillis / 1000) % 60;
         String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
         tvInstruction.setText(timeLeftFormatted);
     }
@@ -205,6 +216,7 @@ public abstract class CameraActivity extends AppCompatActivity
             currentQuestionIdx--;
             tvQuestion.setText(questionList.get(currentQuestionIdx).getQuestion());
             resetTimer();
+            mStepperLayout.onBackClicked();
         } else {
             Toast.makeText(CameraActivity.this, "No more to back ", Toast.LENGTH_SHORT).show();
         }
@@ -217,11 +229,11 @@ public abstract class CameraActivity extends AppCompatActivity
             currentQuestionIdx++;
             tvQuestion.setText(questionList.get(currentQuestionIdx).getQuestion());
             resetTimer();
+            mStepperLayout.proceed();
         }
     }
 
     protected void nextQuestion(int result) {
-        resetTimer();
         if (currentQuestionIdx >= questionList.size() - 1) {
             boolean finalResult = true;
             for (Question question : questionList) {
@@ -248,6 +260,7 @@ public abstract class CameraActivity extends AppCompatActivity
             currentQuestionIdx++;
             tvQuestion.setText(questionList.get(currentQuestionIdx).getQuestion());
             resetTimer();
+            mStepperLayout.proceed();
         }
     }
 

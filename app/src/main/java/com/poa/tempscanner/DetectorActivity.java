@@ -40,7 +40,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private static final String TF_OD_API_LABELS_FILE = "label.txt";
     private static final DetectorMode MODE = DetectorMode.TF_OD_API;
     // Minimum detection confidence to track a detection.
-    private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.85f;
+    private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.7f;
     private static final boolean MAINTAIN_ASPECT = false;
     private static final Size DESIRED_PREVIEW_SIZE = new Size(1280, 720);
     private static final boolean SAVE_PREVIEW_BITMAP = false;
@@ -265,7 +265,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        showQuestion();
+                                        showQuestion(true);
                                     }
                                 });
                             }
