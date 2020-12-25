@@ -39,6 +39,7 @@ public class App extends Application {
         settingModel = new PrintSettingModel();
         emailSettingModel = new EmailSettingModel();
         updateSettingModel = new UpdateSettingModel();
+        cdcSettingModel = new CDCSettingModel();
         Companion.integrateWithMIPSApp(appContext);
     }
 

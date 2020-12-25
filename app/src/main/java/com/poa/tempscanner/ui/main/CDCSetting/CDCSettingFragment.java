@@ -40,8 +40,6 @@ public class CDCSettingFragment extends PreferenceFragmentCompat implements Shar
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
     }
 
 
@@ -61,36 +59,41 @@ public class CDCSettingFragment extends PreferenceFragmentCompat implements Shar
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         CDCSettingModel cdcSettingModel = App.getCDCModel();
         Preference preference = findPreference(key);
+        try {
+            if (preference instanceof SwitchPreferenceCompat) {
+                SwitchPreferenceCompat switchPreferenceCompat = (SwitchPreferenceCompat) preference;
+                switch (key) {
+                    case Keys.CDC_QUESTIONNAIRE:
+                        cdcSettingModel.setCdcQuestionnaire(switchPreferenceCompat.isChecked());
+                        break;
+                    case Keys.CDC_MASK:
+                        cdcSettingModel.setCdcMask(switchPreferenceCompat.isChecked());
+                        System.out.println("hihi");
+                        break;
+                }
 
-        if (preference instanceof SwitchPreferenceCompat) {
-            SwitchPreferenceCompat switchPreferenceCompat = (SwitchPreferenceCompat) preference;
-            switch (key) {
-                case Keys.CDC_QUESTIONNAIRE:
-                    cdcSettingModel.setCdcQuestionnaire(switchPreferenceCompat.isChecked());
-                    break;
-                case Keys.CDC_MASK:
-                    cdcSettingModel.setCdcMask(switchPreferenceCompat.isChecked());
-                    break;
             }
 
-        }
-
-        if (preference instanceof CheckBoxPreference) {
-            CheckBoxPreference checkBoxPreference = (CheckBoxPreference) preference;
-            switch (key) {
-                case Keys.CDC_REQUIRE_EMPLOYEE:
-                    cdcSettingModel.setCdcRequireRoleEmployee(checkBoxPreference.isChecked());
-                    break;
-                case Keys.CDC_REQUIRE_VISITOR:
-                    cdcSettingModel.setCdcRequireRoleVisitor(checkBoxPreference.isChecked());
-                    break;
-                case Keys.CDC_REQUIRE_UNREGISTER:
-                    cdcSettingModel.setCdcRequireRoleUnregister(checkBoxPreference.isChecked());
-                    break;
+            if (preference instanceof CheckBoxPreference) {
+                CheckBoxPreference checkBoxPreference = (CheckBoxPreference) preference;
+                switch (key) {
+                    case Keys.CDC_REQUIRE_EMPLOYEE:
+                        cdcSettingModel.setCdcRequireRoleEmployee(checkBoxPreference.isChecked());
+                        break;
+                    case Keys.CDC_REQUIRE_VISITOR:
+                        cdcSettingModel.setCdcRequireRoleVisitor(checkBoxPreference.isChecked());
+                        break;
+                    case Keys.CDC_REQUIRE_UNREGISTER:
+                        cdcSettingModel.setCdcRequireRoleUnregister(checkBoxPreference.isChecked());
+                        break;
+                }
             }
-        }
 
-        SharedPreferencesController.with(getActivity()).saveString(Keys.EMAIL_SETTING_MODEL, new Gson().toJson(cdcSettingModel));
+            SharedPreferencesController.with(getActivity()).saveString(Keys.CDC_SETTING_MODEL, new Gson().toJson(cdcSettingModel));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

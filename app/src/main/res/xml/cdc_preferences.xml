@@ -8,11 +8,13 @@
                 app:title="CDC Questionnaire Screen" />
             <SwitchPreferenceCompat
                 app:allowDividerAbove="true"
-                app:dependency="email_alert"
+                app:dependency="cdc_questionnaire"
                 app:key="cdc_mask"
                 app:title="@string/email_no_mask" />
         </PreferenceCategory>
-        <PreferenceCategory android:title="Require answer CDC Questionnaire">
+        <PreferenceCategory android:title="Require answer CDC Questionnaire"
+            app:dependency="cdc_questionnaire"
+            >
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="require_role_employee"

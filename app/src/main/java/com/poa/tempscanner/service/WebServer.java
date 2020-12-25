@@ -8,15 +8,20 @@ import android.util.Log;
 import androidx.preference.PreferenceManager;
 
 import com.google.gson.Gson;
+import com.poa.tempscanner.App;
 import com.poa.tempscanner.DetectorActivity;
 import com.poa.tempscanner.MainActivity;
 import com.poa.tempscanner.model.MipsData;
 import com.poa.tempscanner.model.UploadMipsResponse;
 import com.poa.tempscanner.model.WebServerData;
 
+import com.poa.tempscanner.ui.main.CDCSetting.CDCSettingModel;
+import com.poa.tempscanner.ui.main.EmailSetting.EmailSettingModel;
+import com.poa.tempscanner.utils.Keys;
 import com.poa.tempscanner.utils.MailUtils;
 import com.poa.tempscanner.utils.PrintUtil;
 import com.poa.tempscanner.utils.SettingsUtil;
+import com.poa.tempscanner.utils.SharedPreferencesController;
 
 import fi.iki.elonen.NanoHTTPD;
 import timber.log.Timber;
@@ -61,14 +66,19 @@ public class WebServer extends NanoHTTPD {
         if (paramMipsData != null) {
             Context context = this.context;
             Timber.e("Print card");
-            Intent dialogIntent = new Intent(context, DetectorActivity.class);
-            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            dialogIntent.putExtra("mimpsdata",paramMipsData);
-            context.startActivity(dialogIntent);
+            CDCSettingModel cdcSettingModel = new Gson().fromJson(SharedPreferencesController.with(App.getAppContext()).getString(Keys.CDC_SETTING_MODEL), CDCSettingModel.class);
             if (MailUtils.isGTTempORNoMask(paramMipsData, SettingsUtil.getStandardTemperature(PreferenceManager.getDefaultSharedPreferences(context)))) {
                 MailUtils.sendTemperatureWarningIfNeeded(context, paramMipsData, false, SettingsUtil.getStandardTemperature(PreferenceManager.getDefaultSharedPreferences(context)));
             }
+            if(cdcSettingModel.isCdcQuestionnaire()){
 
+                Intent dialogIntent = new Intent(context, DetectorActivity.class);
+                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                dialogIntent.putExtra("mimpsdata",paramMipsData);
+                context.startActivity(dialogIntent);
+            } else {
+                PrintUtil.print(context, paramMipsData);
+            }
         }
     }
 
